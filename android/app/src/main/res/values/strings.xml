@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ZapsOS</string>
+    <string name="enter_text">Message</string>
+    <string name="zapsos_name">ZapsOS:</string>
 </resources>
