@@ -13,6 +13,10 @@
         android:theme="@style/Theme.ZapsOS"
         tools:targetApi="31">
         <activity
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_settings" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -24,6 +28,12 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
+            <meta-data
+                android:name="SPOTIFY_ID"
+                android:value="${SPOTIFY_ID}" />
+            <meta-data
+                android:name="SPOTIFY_SECRET"
+                android:value="${SPOTIFY_SECRET}" />
         </activity>
     </application>
 

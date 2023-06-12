@@ -1,4 +1,4 @@
-package com.whmin.zapsos
+package com.whmin.zapsos.userIntents
 //
 //import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation
 //import edu.stanford.nlp.pipeline.StanfordCoreNLP

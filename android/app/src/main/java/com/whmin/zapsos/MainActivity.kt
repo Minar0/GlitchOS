@@ -1,6 +1,8 @@
 package com.whmin.zapsos
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -24,7 +26,8 @@ class MainActivity : AppCompatActivity() {
         responseBox=findViewById(R.id.zapsosResponse)
 
 
-        inputBox.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
+
+        inputBox.setOnEditorActionListener(OnEditorActionListener { _, actionId, _ ->
             //I'm not sure why handled matters
             var handled = false
 
@@ -46,6 +49,9 @@ class MainActivity : AppCompatActivity() {
             }
             handled
         })
-
+    }
+    fun goToSettings(view: View?) {
+        val intent = Intent(this, SettingsActivity::class.java)
+        startActivity(intent)
     }
 }

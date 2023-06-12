@@ -28,7 +28,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.117" />
+        app:layout_constraintVertical_bias="0.148" />
 
     <TextView
         android:id="@+id/zapsosName"
@@ -37,5 +37,16 @@
         android:text="@string/zapsos_name"
         app:layout_constraintBottom_toTopOf="@+id/zapsosResponse"
         app:layout_constraintStart_toStartOf="@+id/zapsosResponse" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:onClick="goToSettings"
+        android:text="@string/title_activity_settings"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
