@@ -24,17 +24,16 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-            <meta-data
-                android:name="SPOTIFY_ID"
-                android:value="${SPOTIFY_ID}" />
-            <meta-data
-                android:name="SPOTIFY_SECRET"
-                android:value="${SPOTIFY_SECRET}" />
         </activity>
+        <meta-data
+            android:name="SPOTIFY_ID"
+            android:value="${SPOTIFY_ID}" />
+        <meta-data
+            android:name="SPOTIFY_SECRET"
+            android:value="${SPOTIFY_SECRET}" />
     </application>
 
 </manifest>
