@@ -69,7 +69,7 @@ class SettingsActivity : AppCompatActivity(),
         }
     }
 
-    class MessagesFragment : PreferenceFragmentCompat() {
+    class Music : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.music_preferences, rootKey)
         }

@@ -9,4 +9,16 @@
         <item>reply</item>
         <item>reply_all</item>
     </string-array>
+
+    <string-array name="music_services_entries">
+        <item>Spotify</item>
+        <item>Bandcamp</item>
+        <item>None</item>
+    </string-array>
+
+    <string-array name="music_services_values">
+        <item>spotify</item>
+        <item>bandcamp</item>
+        <item>none</item>
+    </string-array>
 </resources>

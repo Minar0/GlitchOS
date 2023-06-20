@@ -1,4 +1,3 @@
 package com.whmin.zapsos.userIntents
 
-class UserIntent {
-}
+class UserIntent
