@@ -13,9 +13,9 @@
         android:autofillHints=""
         android:ems="10"
         android:hint="@string/enter_text"
+        android:imeOptions="actionSend"
         android:inputType="textShortMessage|textLongMessage"
         android:minHeight="48dp"
-        android:imeOptions="actionSend"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -50,13 +50,28 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/test"
+        android:id="@+id/test1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Test"
+        android:onClick="test1"
+        android:text="Test1"
         app:layout_constraintBottom_toTopOf="@+id/userInput"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/Test2"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/zapsosResponse" />
+
+    <Button
+        android:id="@+id/Test2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="test2"
+        android:text="Test2"
+        app:layout_constraintBottom_toBottomOf="@+id/test1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/test1"
+        app:layout_constraintTop_toTopOf="@+id/test1"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

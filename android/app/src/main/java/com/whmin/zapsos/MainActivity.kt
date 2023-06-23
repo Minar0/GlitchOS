@@ -4,13 +4,13 @@ import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.TextView.OnEditorActionListener
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
 import com.whmin.zapsos.modules.ModuleManager
@@ -55,19 +55,30 @@ class MainActivity : AppCompatActivity() {
 
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
         metadata = getApplicationMetadata()
-        moduleManager = ModuleManager(metadata,sharedPref)
+        moduleManager = ModuleManager(metadata,sharedPref,this)
+    }
+
+    override
+    fun onStart(){
+        super.onStart()
+        moduleManager.music.setupProvider()
     }
 
     fun goToSettings(view: View?) {
         val intent = Intent(this, SettingsActivity::class.java)
-        val stringy = metadata.getString("SPOTIFY_ID")
-        val toast = Toast.makeText(this, stringy, Toast.LENGTH_LONG) // in Activity
-        toast.show()
         startActivity(intent)
     }
 
-    fun test(view: View?){
-        moduleManager.music
+    fun test1(view: View?){
+        Log.d("Test", "Test pressed")
+        val musicManager = moduleManager.music
+        musicManager.providerModule?.toggleSongRepeat()
+
+    }
+
+    fun test2(view: View?){
+        val musicManager = moduleManager.music
+        musicManager.providerModule?.togglePlaylistRepeat()
     }
 
     private fun getApplicationMetadata(): Bundle {

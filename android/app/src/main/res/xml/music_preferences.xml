@@ -1,16 +1,9 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
-
     <ListPreference
         app:key="preferred_music_service"
         app:title="@string/preferred_music_service"
-        app:useSimpleSummaryProvider="true" />
-
-    <ListPreference
-        app:defaultValue="reply"
-        app:entries="@array/reply_entries"
-        app:entryValues="@array/reply_values"
-        app:key="reply"
-        app:title="@string/reply_title"
-        app:useSimpleSummaryProvider="true" />
+        app:useSimpleSummaryProvider="true"
+        app:entries="@array/music_services_entries"
+        app:entryValues="@array/music_services_values"/>
 
 </PreferenceScreen>

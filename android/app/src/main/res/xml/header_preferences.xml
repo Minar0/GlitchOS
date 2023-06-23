@@ -1,7 +1,7 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <Preference
-        app:fragment="com.whmin.zapsos.SettingsActivity$MessagesFragment"
+        app:fragment="com.whmin.zapsos.SettingsActivity$MusicFragment"
         app:icon="@drawable/messages"
         app:key="messages_header"
         app:title="@string/music_header" />
