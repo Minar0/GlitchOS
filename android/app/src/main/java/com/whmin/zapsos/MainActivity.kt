@@ -13,16 +13,16 @@ import android.widget.TextView
 import android.widget.TextView.OnEditorActionListener
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
-import com.whmin.zapsos.modules.ModuleManager
+import com.whmin.zapsos.intentengine.IntentEngineManager
 
 
 class MainActivity : AppCompatActivity() {
     lateinit var inputBox: EditText
     lateinit var responseBox: TextView
     lateinit var metadata: Bundle
-    lateinit var moduleManager: ModuleManager
+    lateinit var intentEngine: IntentEngineManager
+    lateinit var appData: AppData
     var userInput: String = ""
-    //val IntentRecognizer = IntentRecogManager()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
             //Code only runs when the send key is pressed
             if (actionId == EditorInfo.IME_ACTION_SEND) {
                 userInput = inputBox.text.toString()
-                responseBox.text = userInput
+                intentEngine.detectAndRunCommand(userInput)
 
                 //This will close the soft keyboard from the current view, if it is focused
                 val view = this.currentFocus
@@ -55,13 +55,15 @@ class MainActivity : AppCompatActivity() {
 
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
         metadata = getApplicationMetadata()
-        moduleManager = ModuleManager(metadata,sharedPref,this)
+        appData = AppData(metadata,sharedPref,this)
+
+        intentEngine = IntentEngineManager(appData)
     }
 
     override
     fun onStart(){
         super.onStart()
-        moduleManager.music.setupProvider()
+        intentEngine.music.setupProvider()
     }
 
     fun goToSettings(view: View?) {
@@ -71,14 +73,13 @@ class MainActivity : AppCompatActivity() {
 
     fun test1(view: View?){
         Log.d("Test", "Test pressed")
-        val musicManager = moduleManager.music
-        musicManager.providerModule?.toggleSongRepeat()
-
+        val musicManager = intentEngine.music
+        musicManager.providerModule?.togglePause()
     }
 
     fun test2(view: View?){
-        val musicManager = moduleManager.music
-        musicManager.providerModule?.togglePlaylistRepeat()
+        val musicManager = intentEngine.music
+        musicManager.providerModule?.authorize()
     }
 
     private fun getApplicationMetadata(): Bundle {

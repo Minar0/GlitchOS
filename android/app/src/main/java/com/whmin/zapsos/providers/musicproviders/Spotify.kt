@@ -1,46 +1,18 @@
-package com.whmin.zapsos.modules
+package com.whmin.zapsos.providers.musicproviders
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
+import com.spotify.android.appremote.api.ContentApi
 import com.spotify.android.appremote.api.SpotifyAppRemote
+import com.spotify.protocol.types.ListItems
 import com.spotify.protocol.types.PlayerState
-
-
-const val LOG_TAG="Music"
-
-class Music(private val metadata: Bundle, private val sharedPref: SharedPreferences, private val context: Context){
-    var providerModule : MusicProvider? = null
-
-    //any new music providers will need to be added here
-    fun setupProvider(){
-        providerModule = when (sharedPref.getString("preferred_music_service","")){
-            "spotify" -> Spotify(metadata, context)
-            else -> null
-        }
-        providerModule?.authorize()
-    }
-}
-
-
-//am I using inheritance correctly? I think this is a good way to implement this
-abstract class MusicProvider(val metadata: Bundle, val context: Context){
-    abstract fun authorize()
-    abstract fun resume(): Int
-    abstract fun pause(): Int
-    abstract fun togglePause(): Int
-    abstract fun skipForward(): Int
-    abstract fun skipBack(): Int
-    abstract fun restartSong(): Int
-    abstract fun toggleSongRepeat(): Int
-    abstract fun togglePlaylistRepeat(): Int
-    abstract fun toggleShuffle(): Int
-}
+import kotlin.math.log
 
 class Spotify(metadata: Bundle, context: Context) : MusicProvider(metadata,context) {
+    override val logTag: String="Spotify"
     var mSpotifyAppRemote: SpotifyAppRemote? = null
 
     override
@@ -55,37 +27,46 @@ class Spotify(metadata: Bundle, context: Context) : MusicProvider(metadata,conte
             object : Connector.ConnectionListener {
                 override fun onConnected(spotifyAppRemote: SpotifyAppRemote) {
                     mSpotifyAppRemote = spotifyAppRemote
-                    Log.d(LOG_TAG, "Connection Success")
+                    Log.d(logTag, "Connection Success")
                 }
                 override fun onFailure(error: Throwable) {errorCallback }
             }
         )
     }
 
+    override fun playSong(song: String, artist: String): Boolean {
+        val searchedItems = mSpotifyAppRemote!!.contentApi.getRecommendedContentItems(ContentApi.ContentType.DEFAULT)
+        searchedItems.setResultCallback {
+            val firstItem = it.items[0]
+            Log.d(logTag, "Found $firstItem")
+        }
+        return false
+    }
+
     fun disconnect(){
         SpotifyAppRemote.disconnect(mSpotifyAppRemote)
     }
 
-    override fun resume(): Int {
-        if (!remoteExists()){return 0}//Automatically authorizes mSpotifyAppRemote if not authorized. Currently this makes Zapps forget the current command.
+    override fun resume(): Boolean {
+        if (!remoteExists()){return true}//Automatically authorizes mSpotifyAppRemote if not authorized. Currently this makes Zapps forget the current command.
         mSpotifyAppRemote!!.playerApi.resume().setResultCallback {
-            Log.d(LOG_TAG, "Playing")}
+            Log.d(logTag, "Playing")}
             .setErrorCallback {errorCallback}
-        return 1
+        return true
     }
 
-    override fun pause(): Int {
-        if (!remoteExists()){return 0}
+    override fun pause(): Boolean {
+        if (!remoteExists()){return false}
         mSpotifyAppRemote!!.playerApi.pause().setResultCallback {
-            Log.d(LOG_TAG, "Paused")}
+            Log.d(logTag, "Paused")}
             .setErrorCallback {errorCallback}
-        return 1
+        return true
     }
 
 
     override
-    fun togglePause(): Int {
-        if (!remoteExists()){return 0}
+    fun togglePause(): Boolean {
+        if (!remoteExists()){return false}
 
         mSpotifyAppRemote!!.playerApi.playerState.setResultCallback { playerState: PlayerState ->
             if (playerState.isPaused) {
@@ -95,44 +76,44 @@ class Spotify(metadata: Bundle, context: Context) : MusicProvider(metadata,conte
                 pause()
             }
         }
-        return 1
+        return true
     }
 
-    override fun skipForward(): Int {
-        if (!remoteExists()){return 0}
+    override fun skipForward(): Boolean {
+        if (!remoteExists()){return false}
         mSpotifyAppRemote!!.playerApi.skipNext().setResultCallback {
-            Log.d(LOG_TAG, "Skipped forward")}
+            Log.d(logTag, "Skipped forward")}
             .setErrorCallback {errorCallback}
-        return 1
+        return true
     }
 
-    override fun skipBack(): Int {//This should jump back by a song. Currently acts like restartSong()
-        if (!remoteExists()){return 0}
+    override fun skipBack(): Boolean {//This should jump back by a song. Currently acts like restartSong()
+        if (!remoteExists()){return false}
         mSpotifyAppRemote!!.playerApi.skipPrevious().setResultCallback {
-            Log.d(LOG_TAG, "Skipped backwards")
-            mSpotifyAppRemote!!.playerApi.skipPrevious().setResultCallback {Log.d(LOG_TAG, "Skipped backwards again")}
+            Log.d(logTag, "Skipped backwards")
+            mSpotifyAppRemote!!.playerApi.skipPrevious().setResultCallback { Log.d(logTag, "Skipped backwards again")}
         }
             .setErrorCallback {errorCallback}
-        return 1
+        return true
     }
 
-    override fun restartSong(): Int {
-        if (!remoteExists()){return 0}
+    override fun restartSong(): Boolean {
+        if (!remoteExists()){return false}
         mSpotifyAppRemote!!.playerApi.skipPrevious().setResultCallback {
-            Log.d(LOG_TAG, "Toggled shuffle")}
+            Log.d(logTag, "Toggled shuffle")}
             .setErrorCallback {errorCallback}
-        return 1
+        return true
     }
 
     //Used in the repeat toggle steps. If used make sure to run remoteExists beforehand. State 0 is no repeat, State 1 is repeat playlist and State 2 is repeat Song
     private fun setRepeat(repeatState: Int) {
         mSpotifyAppRemote!!.playerApi.setRepeat(repeatState).setResultCallback {
-            Log.d(LOG_TAG, "Set shuffle to state $repeatState")}
+            Log.d(logTag, "Set shuffle to state $repeatState")}
             .setErrorCallback {errorCallback}
     }
 
-    override fun togglePlaylistRepeat(): Int {
-        if (!remoteExists()){return 0}
+    override fun togglePlaylistRepeat(): Boolean {
+        if (!remoteExists()){return false}
         mSpotifyAppRemote!!.playerApi.playerState.setResultCallback { playerState: PlayerState ->
             if(playerState.playbackOptions.repeatMode!=2){
                 setRepeat(2)
@@ -141,11 +122,11 @@ class Spotify(metadata: Bundle, context: Context) : MusicProvider(metadata,conte
                 setRepeat(0)
             }
         }
-        return 1
+        return true
     }
 
-    override fun toggleSongRepeat(): Int {
-        if (!remoteExists()){return 0}
+    override fun toggleSongRepeat(): Boolean {
+        if (!remoteExists()){return false}
         mSpotifyAppRemote!!.playerApi.playerState.setResultCallback { playerState: PlayerState ->
             if(playerState.playbackOptions.repeatMode!=1){
                 setRepeat(1)
@@ -154,22 +135,22 @@ class Spotify(metadata: Bundle, context: Context) : MusicProvider(metadata,conte
                 setRepeat(0)
             }
         }
-        return 1
+        return true
     }
 
-    override fun toggleShuffle(): Int {
-        if (!remoteExists()){return 0}
+    override fun toggleShuffle(): Boolean {
+        if (!remoteExists()){return false}
         mSpotifyAppRemote!!.playerApi.toggleShuffle().setResultCallback {
-            Log.d(LOG_TAG, "Toggled shuffle")}
+            Log.d(logTag, "Toggled shuffle")}
             .setErrorCallback {errorCallback}
-        return 1
+        return true
     }
 
 
 
     private fun remoteExists(): Boolean {
         if (mSpotifyAppRemote==null) {
-            Log.e(LOG_TAG, "Remote doesn't exist, authenticating")
+            Log.e(logTag, "Remote doesn't exist, authenticating")
             authorize()
             return false
         }
