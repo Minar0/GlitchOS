@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/userInput"
+        android:id="@+id/user_input"
         android:layout_width="381dp"
         android:layout_height="52dp"
         android:layout_marginBottom="8dp"
@@ -21,10 +21,10 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/zapsosResponse"
+        android:id="@+id/zapsos_response"
         android:layout_width="325dp"
         android:layout_height="126dp"
-        app:layout_constraintBottom_toTopOf="@+id/userInput"
+        app:layout_constraintBottom_toTopOf="@+id/user_input"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -35,8 +35,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/zapsos_name"
-        app:layout_constraintBottom_toTopOf="@+id/zapsosResponse"
-        app:layout_constraintStart_toStartOf="@+id/zapsosResponse" />
+        app:layout_constraintBottom_toTopOf="@+id/zapsos_response"
+        app:layout_constraintStart_toStartOf="@+id/zapsos_response" />
 
     <Button
         android:id="@+id/button"
@@ -55,11 +55,11 @@
         android:layout_height="wrap_content"
         android:onClick="test1"
         android:text="Test1"
-        app:layout_constraintBottom_toTopOf="@+id/userInput"
+        app:layout_constraintBottom_toTopOf="@+id/user_input"
         app:layout_constraintEnd_toStartOf="@+id/Test2"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/zapsosResponse" />
+        app:layout_constraintTop_toBottomOf="@+id/zapsos_response" />
 
     <Button
         android:id="@+id/Test2"

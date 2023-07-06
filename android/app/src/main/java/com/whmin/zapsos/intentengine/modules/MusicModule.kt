@@ -1,9 +1,10 @@
 package com.whmin.zapsos.intentengine.modules
 
+import android.app.Activity
+import android.content.SharedPreferences
 import android.util.Log
 import com.whmin.zapsos.AppData
 import com.whmin.zapsos.providers.musicproviders.*
-import java.lang.IllegalStateException
 import java.util.regex.Pattern
 
 
@@ -15,7 +16,9 @@ class MusicModule(private val appData: AppData): Module(){
     private val songArtistRegex = Pattern.compile("""play\s*(.*?)\s*(?:by\s*(.*))?${'$'}""")  //generates a group of the words between play and by. Also generates a group of the words after by. If by doesn't exist it generates a group of everything after play. Damn regex is hard to read
     private val musicSynRegex = Pattern.compile("""^(?:song|tune|music|sound)s?${'$'}""")
 
-    override fun getFullCommandHash(input: String): HashMap<String, String>? {
+
+
+    override fun getFullCommandHash(input: String): HashMap<String, String> {
         val returnHashMap: HashMap<String,String>  = HashMap()
         val mainCommandMatcher = intentRegex.matcher(input)
         mainCommandMatcher.find()
@@ -65,17 +68,39 @@ class MusicModule(private val appData: AppData): Module(){
             "toggle_pause" -> {
                 providerModule?.togglePause()
             }
+            else -> {
+                Log.e(moduleName,"CommandHash not recognized")
+            }
         }
         return true
     }
 
 
-
-    fun setupProvider(){
+    //runs on startup and when user changes preferred provider
+    fun setupProvider(activity: Activity){
         providerModule = when (appData.sharedPref.getString("preferred_music_service","")){//any new music providers will need to be added to this case statement
-            "spotify" -> Spotify(appData.metadata, appData.context)
+            "spotify" -> Spotify(appData.metadata, activity.applicationContext)
             else -> null
         }
-        providerModule?.authorize()
+        providerModule?.authorize(activity)
+    }
+    //Code that allows an activity to change the music provider. Only used in the Settings activity
+    lateinit var providerListener: SharedPreferences.OnSharedPreferenceChangeListener
+    fun setupProviderListener(activity: Activity){
+        providerListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+            if (key == "preferred_music_service") {
+                Log.d(moduleName,"Changed provider")
+                setupProvider(activity)
+            }
+        }
+        appData.sharedPref.registerOnSharedPreferenceChangeListener(providerListener)
+        Log.d(moduleName,"Listener registered")
+    }
+    fun cleanupProviderListener(){
+        try {
+            appData.sharedPref.unregisterOnSharedPreferenceChangeListener(providerListener)
+            Log.d(moduleName,"Listener unregistered")
+        }
+        catch (e: UninitializedPropertyAccessException) {Log.d(moduleName,"Listener not initialized")}
     }
 }
