@@ -1,6 +1,8 @@
 package com.whmin.zapsos
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -13,23 +15,31 @@ import android.widget.TextView
 import android.widget.TextView.OnEditorActionListener
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
-import com.whmin.zapsos.intentengine.IntentEngineManager
+import com.whmin.zapsos.intentengine.IntentEngine
 
 
 class MainActivity : AppCompatActivity() {
     lateinit var inputBox: EditText
     lateinit var responseBox: TextView
     lateinit var metadata: Bundle
-    lateinit var intentEngine: IntentEngineManager
+    lateinit var intentEngine: IntentEngine
     lateinit var appData: AppData
     var userInput: String = ""
+
+    //Handles changes to the music provider
+    //private lateinit var sp: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.message_screen)
 
-        inputBox = findViewById(R.id.userInput)
-        responseBox = findViewById(R.id.zapsosResponse)
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
+        metadata = getApplicationMetadata()
+        IntentEngine.initialize(metadata, sharedPref, applicationContext)
+        intentEngine = IntentEngine
+
+        inputBox = findViewById(R.id.user_input)
+        responseBox = findViewById(R.id.zapsos_response)
 
         inputBox.setOnEditorActionListener(OnEditorActionListener { _, actionId, _ ->
             //I'm not sure why handled matters
@@ -53,17 +63,8 @@ class MainActivity : AppCompatActivity() {
             handled
         })
 
-        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
-        metadata = getApplicationMetadata()
-        appData = AppData(metadata,sharedPref,this)
 
-        intentEngine = IntentEngineManager(appData)
-    }
-
-    override
-    fun onStart(){
-        super.onStart()
-        intentEngine.music.setupProvider()
+        intentEngine.music.setupProvider(this)
     }
 
     fun goToSettings(view: View?) {
@@ -79,7 +80,7 @@ class MainActivity : AppCompatActivity() {
 
     fun test2(view: View?){
         val musicManager = intentEngine.music
-        musicManager.providerModule?.authorize()
+        musicManager.providerModule?.authorize(this)
     }
 
     private fun getApplicationMetadata(): Bundle {

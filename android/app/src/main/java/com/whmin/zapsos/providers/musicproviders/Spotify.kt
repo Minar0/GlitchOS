@@ -1,25 +1,74 @@
 package com.whmin.zapsos.providers.musicproviders
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.result.ActivityResult
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.ContentApi
 import com.spotify.android.appremote.api.SpotifyAppRemote
-import com.spotify.protocol.types.ListItems
 import com.spotify.protocol.types.PlayerState
-import kotlin.math.log
+import com.spotify.sdk.android.auth.AccountsQueryParameters.CLIENT_ID
+import com.spotify.sdk.android.auth.AccountsQueryParameters.REDIRECT_URI
+import com.spotify.sdk.android.auth.AuthorizationClient
+import com.spotify.sdk.android.auth.AuthorizationRequest
+import com.spotify.sdk.android.auth.AuthorizationResponse
+
 
 class Spotify(metadata: Bundle, context: Context) : MusicProvider(metadata,context) {
     override val logTag: String="Spotify"
     var mSpotifyAppRemote: SpotifyAppRemote? = null
+    private val clientID = super.metadata.getString("SPOTIFY_ID")
+    private val redirectURI = "comwhminzapsos://callback"
+    private var accessToken: String = ""
+    private val requestCode = 1337
 
-    override
-    fun authorize(){
-        val connectionParams = ConnectionParams.Builder(super.metadata.getString("SPOTIFY_ID"))
-            .setRedirectUri("comwhminzapsos://callback")
-            .showAuthView(true)
+    override fun authorize(activity: Activity) {
+        val builder = AuthorizationRequest.Builder(CLIENT_ID, AuthorizationResponse.Type.TOKEN, REDIRECT_URI)
+        builder.setScopes(arrayOf("app-remote-control"))
+        val request = builder.build()
+
+        AuthorizationClient.openLoginActivity(activity, requestCode, request)
+    }
+
+    override fun getActivityResult(activityResult: ActivityResult) {
+        if (activityResult.resultCode == Activity.RESULT_OK) {
+            val data: Intent? = activityResult.data
+            // Check if the result comes from the correct activity
+            if (activityResult.data != null && activityResult.data?.getIntExtra("requestCode",-1) == requestCode) {
+                val response = AuthorizationClient.getResponse(activityResult.resultCode, activityResult.data)
+                when (response.getType()) {
+                    // Response was successful and contains an auth token
+                    AuthorizationResponse.Type.TOKEN -> {
+                        accessToken=response.code
+                        Log.d(logTag,"Got token $accessToken")
+                    }
+                    AuthorizationResponse.Type.ERROR -> {
+                        // Handle error response
+                    }
+                    // Most likely auth flow was canceled
+                    else -> {
+                    }
+                }
+            }
+        }
+    }
+
+    fun disconnect(){
+        SpotifyAppRemote.disconnect(mSpotifyAppRemote)
+    }
+
+    fun setAccessToken(token: String){
+        accessToken=token
+    }
+
+    private fun connectRemote(){
+        val connectionParams = ConnectionParams.Builder(clientID)
+            .setRedirectUri(redirectURI)
+            .showAuthView(false)
             .build()
 
         SpotifyAppRemote.connect(
@@ -35,20 +84,17 @@ class Spotify(metadata: Bundle, context: Context) : MusicProvider(metadata,conte
     }
 
     override fun playSong(song: String, artist: String): Boolean {
+        if (!remoteExists()){return false}//Automatically authorizes mSpotifyAppRemote if not authorized. Currently this makes Zapps forget the current command.
         val searchedItems = mSpotifyAppRemote!!.contentApi.getRecommendedContentItems(ContentApi.ContentType.DEFAULT)
         searchedItems.setResultCallback {
             val firstItem = it.items[0]
             Log.d(logTag, "Found $firstItem")
         }
-        return false
-    }
-
-    fun disconnect(){
-        SpotifyAppRemote.disconnect(mSpotifyAppRemote)
+        return true
     }
 
     override fun resume(): Boolean {
-        if (!remoteExists()){return true}//Automatically authorizes mSpotifyAppRemote if not authorized. Currently this makes Zapps forget the current command.
+        if (!remoteExists()){return false}
         mSpotifyAppRemote!!.playerApi.resume().setResultCallback {
             Log.d(logTag, "Playing")}
             .setErrorCallback {errorCallback}
@@ -151,14 +197,19 @@ class Spotify(metadata: Bundle, context: Context) : MusicProvider(metadata,conte
     private fun remoteExists(): Boolean {
         if (mSpotifyAppRemote==null) {
             Log.e(logTag, "Remote doesn't exist, authenticating")
-            authorize()
+            connectRemote()
             return false
         }
         return true
     }
 
+    fun getAccessToken(): String{
+
+        return ""
+    }
+
     //Woooo! Finally figured out lambda functions
     private val errorCallback: (Throwable) -> Unit = {
-        Log.d("Spotify", it.toString())
+        Log.e("Spotify", it.toString())
     }
 }

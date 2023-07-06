@@ -16,6 +16,10 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders = [
+                redirectHostName: "callback",
+                redirectSchemeName: "comwhminzapsos"
+        ]
     }
 
     buildTypes {
@@ -45,17 +49,16 @@ dependencies {
 
 
     implementation files('../spotify-remote-lib/spotify-app-remote-release-0.7.2.aar')
-    implementation "com.google.code.gson:gson:2.8.9"
-
+    implementation 'com.spotify.android:auth:2.0.1'
+    implementation 'com.google.code.gson:gson:2.8.9'
+    implementation 'com.android.volley:volley:1.2.1'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-
-
 }
-
-//Implements Navigation support
+/*
+//Implements Navigation support. Not utilized yet
 dependencies {
     def nav_version = "2.6.0"
 
@@ -76,3 +79,4 @@ dependencies {
     // Jetpack Compose Integration
     implementation "androidx.navigation:navigation-compose:$nav_version"
 }
+*/

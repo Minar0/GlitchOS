@@ -1,16 +1,34 @@
 package com.whmin.zapsos.intentengine
 
+import android.content.Context
+import android.content.SharedPreferences
+import android.os.Bundle
 import android.util.Log
 import com.whmin.zapsos.AppData
+import com.whmin.zapsos.MetadataManager
 import com.whmin.zapsos.intentengine.modules.*
 import java.util.regex.Pattern
-import kotlin.math.log
 
-class IntentEngineManager(appData: AppData) {
-    val music = MusicModule(appData)
-    val calendar = CalendarModule()
-    val moduleList: Array<Module> = arrayOf(music, calendar)//Higher priority intents should be closer to the top
+//Yes, this is a singleton. Am I wrong to do this? Maybe? I'm a perpetual hobbyist so if a professional has some opinions on the matter let me know
+object IntentEngine {
+    lateinit var appData: AppData
+    lateinit var appContext: Context
+
     lateinit var currentModule: Module
+    lateinit var music: MusicModule
+    val calendar = CalendarModule()
+    lateinit var moduleList: Array<Module>
+
+    fun initialize(metadata: Bundle, sharedPref: SharedPreferences, ct: Context){
+        appData = AppData(metadata,sharedPref)
+        appContext = ct
+
+        music = MusicModule(appData)
+        moduleList = arrayOf(music, calendar)//Higher priority intents should be closer to the top
+    }
+
+
+
 
     val logTag="Intent Engine"
 
