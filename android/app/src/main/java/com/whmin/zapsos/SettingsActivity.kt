@@ -1,22 +1,16 @@
 package com.whmin.zapsos
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.contract.ActivityResultContracts.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import com.spotify.sdk.android.auth.LoginActivity.REQUEST_CODE
 import com.whmin.zapsos.intentengine.IntentEngine
 
 
 private const val TITLE_TAG = "settingsActivityTitle"
 
-class SettingsActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
+class SettingsActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceStartFragmentCallback { //Most of this stuff is boilerplate code made by Android Studio. I'm slowly figuring out how it all works. Never worked with Fragments before
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings_activity)
@@ -34,6 +28,8 @@ class SettingsActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPrefere
             }
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        IntentEngine.music.setupProviderListener(this)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -71,17 +67,16 @@ class SettingsActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPrefere
         return true
     }
 
-    override fun onStop() {
-        super.onStop()
-        IntentEngine.music.cleanupProviderListener()
+    override fun onPause() {
+        super.onPause()
+        IntentEngine.music.cleanupProviderListener()//Do I really need to deregister the listener? It seems like Android will do it for me
     }
 
-    private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            IntentEngine.music.providerModule?.getActivityResult(result)
-        }
+    @Deprecated("Deprecated in Java")// I know, I know, bad practice. I don't know how to get the activity result from the Spotify Auth Lib using the activity result API. TODO: learn how to use activity result api
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        IntentEngine.music.providerModule?.onActivityResult(requestCode, resultCode, data)
     }
-
 
     class HeaderFragment : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

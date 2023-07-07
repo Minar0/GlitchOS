@@ -22,7 +22,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var inputBox: EditText
     lateinit var responseBox: TextView
     lateinit var metadata: Bundle
-    lateinit var intentEngine: IntentEngine
     lateinit var appData: AppData
     var userInput: String = ""
 
@@ -36,7 +35,6 @@ class MainActivity : AppCompatActivity() {
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
         metadata = getApplicationMetadata()
         IntentEngine.initialize(metadata, sharedPref, applicationContext)
-        intentEngine = IntentEngine
 
         inputBox = findViewById(R.id.user_input)
         responseBox = findViewById(R.id.zapsos_response)
@@ -48,7 +46,7 @@ class MainActivity : AppCompatActivity() {
             //Code only runs when the send key is pressed
             if (actionId == EditorInfo.IME_ACTION_SEND) {
                 userInput = inputBox.text.toString()
-                intentEngine.detectAndRunCommand(userInput)
+                IntentEngine.detectAndRunCommand(userInput)
 
                 //This will close the soft keyboard from the current view, if it is focused
                 val view = this.currentFocus
@@ -62,9 +60,12 @@ class MainActivity : AppCompatActivity() {
             }
             handled
         })
+    }
 
+    override fun onStart() {
+        super.onStart()
+        IntentEngine.music.setupProvider(this)
 
-        intentEngine.music.setupProvider(this)
     }
 
     fun goToSettings(view: View?) {
@@ -74,13 +75,20 @@ class MainActivity : AppCompatActivity() {
 
     fun test1(view: View?){
         Log.d("Test", "Test pressed")
-        val musicManager = intentEngine.music
+        val musicManager = IntentEngine.music
         musicManager.providerModule?.togglePause()
     }
 
     fun test2(view: View?){
-        val musicManager = intentEngine.music
+        val musicManager = IntentEngine.music
         musicManager.providerModule?.authorize(this)
+        IntentEngine.appData.sharedPref.getString("spotify_access_token","none found")?.let { Log.d("Spotify", it) }
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        IntentEngine.music.providerModule?.onActivityResult(requestCode,resultCode,data)
     }
 
     private fun getApplicationMetadata(): Bundle {

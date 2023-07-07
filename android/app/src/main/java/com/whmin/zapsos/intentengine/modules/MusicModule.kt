@@ -64,7 +64,7 @@ class MusicModule(private val appData: AppData): Module(){
 
     override fun runCommandFromHash(commandMap: HashMap<String, String>): Boolean {
         when (commandMap["command"]){
-            "play" -> Log.d(moduleName,"test")//providerModule.play(commandMap["song"],commandMap["artist"])
+            "play" -> providerModule?.playSong(commandMap["song"],commandMap["artist"])
             "toggle_pause" -> {
                 providerModule?.togglePause()
             }
@@ -79,13 +79,14 @@ class MusicModule(private val appData: AppData): Module(){
     //runs on startup and when user changes preferred provider
     fun setupProvider(activity: Activity){
         providerModule = when (appData.sharedPref.getString("preferred_music_service","")){//any new music providers will need to be added to this case statement
-            "spotify" -> Spotify(appData.metadata, activity.applicationContext)
+            "spotify" -> Spotify(appData, activity.applicationContext)
             else -> null
         }
-        providerModule?.authorize(activity)
+        providerModule?.authorize(activity) // Should setupProvider also run authorize? I think it's efficient but not very readable
     }
+
     //Code that allows an activity to change the music provider. Only used in the Settings activity
-    lateinit var providerListener: SharedPreferences.OnSharedPreferenceChangeListener
+    private lateinit var providerListener: SharedPreferences.OnSharedPreferenceChangeListener
     fun setupProviderListener(activity: Activity){
         providerListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             if (key == "preferred_music_service") {
@@ -97,10 +98,11 @@ class MusicModule(private val appData: AppData): Module(){
         Log.d(moduleName,"Listener registered")
     }
     fun cleanupProviderListener(){
-        try {
+        if (::providerListener.isInitialized) {
             appData.sharedPref.unregisterOnSharedPreferenceChangeListener(providerListener)
             Log.d(moduleName,"Listener unregistered")
+        } else {
+            Log.d(moduleName,"Listener is not registered")
         }
-        catch (e: UninitializedPropertyAccessException) {Log.d(moduleName,"Listener not initialized")}
     }
 }
