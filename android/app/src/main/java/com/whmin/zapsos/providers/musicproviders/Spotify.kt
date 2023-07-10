@@ -14,7 +14,6 @@ import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse
 import com.whmin.zapsos.AppData
-import com.whmin.zapsos.R
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -34,19 +33,18 @@ class Spotify(appdata: AppData, context: Context) : MusicProvider(appdata,contex
     private val tokenRequestCode = 1337
     private val sharedPrefEditor = super.appdata.sharedPref.edit()
 
+
     private val client = OkHttpClient()
     override fun playSong(song: String?, artist: String?): Boolean {
         Log.d(moduleName,"Playing song")
-
         val accessToken = appdata.sharedPref.getString("spotify_access_token","")
         if (accessToken == null || accessToken == ""){return false}// If no token is found it returns false
         if (!remoteExists()){return false}//Automatically authorizes mSpotifyAppRemote if not authorized. Currently this makes Zapps forget the current command.
 
-
         val encodedString = URLEncoder.encode(song, StandardCharsets.UTF_8.toString())
         Log.d(moduleName,"Encoded string: $encodedString")
         val request = Request.Builder()
-            .url("https://api.spotify.com/v1/search?q=$encodedString&type=track&limit=3")
+            .url("https://api.spotify.com/v1/search?q=$encodedString&type=track&limit=2") //TODO: add searching via artist too
             .addHeader("Authorization", "Bearer $accessToken")
             .build()
 
@@ -55,19 +53,17 @@ class Spotify(appdata: AppData, context: Context) : MusicProvider(appdata,contex
                 val responseBody = response.body?.string().toString() // woooooo two string calls in one line? poggers
                 val responseJSON = JSONObject(responseBody)
                 if (responseJSON.length() > 0) {
-                    val trackURI = responseJSON.getJSONObject("tracks").getJSONArray("items").getJSONObject(0).getString("uri")
-                    Log.d(moduleName,"First track URI: $trackURI")
-                    mSpotifyAppRemote
+                    val trackURI0 = responseJSON.getJSONObject("tracks").getJSONArray("items").getJSONObject(0).getString("uri")
+                    Log.d(moduleName,"First track URI: $trackURI0")
+                    mSpotifyAppRemote //TODO: If the song that is 1st is currently playing, take the second result
                         ?.playerApi
-                        ?.play(trackURI)
+                        ?.play(trackURI0)
                         ?.setResultCallback(CallResult.ResultCallback<Empty> {Log.d(moduleName, "Playing song")})
                         ?.setErrorCallback(errorCallback) //this section has got more question marks than me while writing this
                 }
                 else {Log.d(moduleName,"No tracks found in the response.")}
             }
-            override fun onFailure(call: Call, e: IOException) {
-                Log.d(moduleName,e.toString())
-            }
+            override fun onFailure(call: Call, e: IOException) {Log.d(moduleName,e.toString())}
         })
         return true
     }
