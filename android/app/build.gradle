@@ -50,7 +50,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.9.3'
 
 
-    implementation files('../libs/spotify-remote-lib/spotify-app-remote-release-0.7.2.aar')
+    implementation files('../libs/spotify-android-sdk-0_7_2.aar')
     implementation 'com.spotify.android:auth:2.0.1'
     implementation 'com.google.code.gson:gson:2.8.9'
     implementation 'com.android.volley:volley:1.2.1'
@@ -60,7 +60,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     //implements PocketSphynx
-    //implementation files(':aars')
+    implementation files('../libs/pocketsphinx-android-5prealpha-release.aar')
     //implementation project(':models')
 }
 

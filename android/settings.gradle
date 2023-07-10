@@ -14,6 +14,3 @@ dependencyResolutionManagement {
 }
 rootProject.name = "ZapsOS"
 include ':app'
-include ':spotify-remote-lib'
-//include ':aars'
-//include ':models'
