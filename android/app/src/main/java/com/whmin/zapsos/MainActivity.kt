@@ -1,8 +1,7 @@
 package com.whmin.zapsos
 
-import android.content.Context
+
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -18,15 +17,13 @@ import androidx.preference.PreferenceManager
 import com.whmin.zapsos.intentengine.IntentEngine
 
 
+
 class MainActivity : AppCompatActivity() {
     lateinit var inputBox: EditText
     lateinit var responseBox: TextView
     lateinit var metadata: Bundle
     lateinit var appData: AppData
     var userInput: String = ""
-
-    //Handles changes to the music provider
-    //private lateinit var sp: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
