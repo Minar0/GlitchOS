@@ -5,12 +5,14 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import com.whmin.zapsos.AppData
-import com.whmin.zapsos.MetadataManager
 import com.whmin.zapsos.intentengine.modules.*
+import java.util.Locale
 import java.util.regex.Pattern
 
-//Yes, this is a singleton. Am I wrong to do this? Maybe? I'm a perpetual hobbyist so if a professional has some opinions on the matter let me know
+//Yes, this is a singleton. Am I wrong to do this? Maybe? I'm a perpetual hobbyist so if a professional ha  s some opinions on the matter let me know
+//I've recently created a Service to handle a lot of ZapsOS stuff. Maybe I can de-singleton this guy now? Something to consider later. TODO: Consider desinglization
 object IntentEngine {
+    var isInit = false
     lateinit var appData: AppData
     lateinit var appContext: Context
 
@@ -20,6 +22,7 @@ object IntentEngine {
     lateinit var moduleList: Array<Module>
 
     fun initialize(metadata: Bundle, sharedPref: SharedPreferences, ct: Context){
+        isInit = true
         appData = AppData(metadata,sharedPref)
         appContext = ct
 
@@ -27,44 +30,41 @@ object IntentEngine {
         moduleList = arrayOf(music, calendar)//Higher priority intents should be closer to the top
     }
 
-
-
-
-    val logTag="Intent Engine"
+    val moduleName="Intent Engine"
 
     //used for preprocessing
     private val zapsOSNicknames= "za(p|pp)sos|za(p|pp)s|za(p|pp)y"
     private val preprocessPattern: Pattern = Pattern.compile(zapsOSNicknames)
 
 
-    fun detectAndRunCommand(input: String): Boolean{
+    fun detectAndRunCommand(input: String): String{
         val preprocessedInput = preprocessInput(input)
         if (preprocessedInput == null || preprocessedInput == ""){ //TODO: add a way for Zaps to explain why a command failed
-            Log.e(logTag,"Input string cleared by preprocessor")
-            return false
+            Log.e(moduleName,"Input string cleared by preprocessor")
+            return "Yes?"
         }
-        Log.d(logTag,"Input preprocessed: $preprocessedInput")
+        Log.d(moduleName,"Input preprocessed: $preprocessedInput")
 
         val intendedModule = classifyIntent(preprocessedInput)
         if (intendedModule==null) {
-            Log.e(logTag,"No intended module detected from $preprocessedInput")
-            return false
+            Log.e(moduleName,"No intended module detected from $preprocessedInput")
+            return "Command not detected"
         }
-        Log.d(logTag,"Intent found: ${intendedModule.moduleName}")
+        Log.d(moduleName,"Intent found: ${intendedModule.moduleName}")
 
         val ranCommand = intendedModule.runCommand(preprocessedInput)
         if (!ranCommand) {
-            Log.e(logTag,"Command failed to run")
-            return false
+            Log.e(moduleName,"Command failed to run")
+            return "Something went wrong while running your request"
         }
 
-        Log.d(logTag,"Running command")
-        return true
+        Log.d(moduleName,"Running command")
+        return "Running Command"
     }
 
     private fun preprocessInput(toBeProcessed: String): String?{
         val matcher = preprocessPattern.matcher(toBeProcessed)
-        return matcher.replaceAll("")
+        return matcher.replaceAll("").lowercase()
     }
 
     private fun classifyIntent(input: String): Module? {
