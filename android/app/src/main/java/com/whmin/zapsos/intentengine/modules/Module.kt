@@ -7,7 +7,7 @@ import java.util.regex.Pattern
 
 abstract class Module {
     open val moduleName: String = "Module"
-    abstract val intentRegex: Pattern //This string is how intentEngine knows what module to use
+    abstract val intentRegex: Pattern //This string is how IntentEngine knows what module to use
 
     open fun detectIntent(input: String): Boolean {
         return intentRegex.matcher(input).find()

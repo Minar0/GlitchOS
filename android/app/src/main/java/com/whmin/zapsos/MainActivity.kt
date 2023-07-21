@@ -4,14 +4,12 @@ package com.whmin.zapsos
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.IBinder
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.TextView.OnEditorActionListener
 import androidx.appcompat.app.AppCompatActivity
 import com.whmin.zapsos.intentengine.IntentEngine
 import com.whmin.zapsos.service.ZapsOSConnection
@@ -19,9 +17,10 @@ import com.whmin.zapsos.service.ZapsOSService
 
 
 class MainActivity : AppCompatActivity() {
-    private var zapsOSConnection = ZapsOSConnection()
     private lateinit var inputBox: EditText
     lateinit var responseBox: TextView
+    private var zapsOSConnection = ZapsOSConnection(this)
+    private lateinit var intentEngine: IntentEngine
     var userInput: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,20 +50,21 @@ class MainActivity : AppCompatActivity() {
             handled
         }
 
-        //Starts the ZapsOS Service
+        //Starts the ZapsOS Service. The connection callback gets a reference to the intentEngine and also sets up the provider
+        val zapsOSServiceConnectionCallback: (() -> Unit) = {
+            intentEngine = zapsOSConnection.zapsOSService?.intentEngine!!
+            intentEngine.music.setupProvider(this)
+            Log.d("Main","Created intentEngine")
+        }
+        zapsOSConnection.onConnectedCallback=zapsOSServiceConnectionCallback
         val zapsOSServiceIntent = Intent(this, ZapsOSService::class.java)
         startForegroundService(zapsOSServiceIntent)
         bindService(zapsOSServiceIntent, zapsOSConnection, Context.BIND_ABOVE_CLIENT)
     }
 
-    override fun onStart() {
-        if (IntentEngine.isInit) {IntentEngine.music.setupProvider(this)}
-        super.onStart()
-    }
-
     override fun onStop() {
         super.onStop()
-        zapsOSConnection.unbind(this)
+        zapsOSConnection.unbind()
     }
 
     fun goToSettings(view: View?) {
@@ -72,13 +72,12 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    fun test1(view: View?){
-        Log.d("Test1", "Test pressed")
-        val musicManager = IntentEngine.music
-        musicManager.providerModule?.togglePause()
+    fun test1(view: View?) {
+        Log.d("Test1", "Test1 pressed")
+        intentEngine.music.providerModule?.togglePause()
     }
 
-    fun test2(view: View?){
+    fun test2(view: View?) {
         Log.d("Test2", "Test2 pressed")
         zapsOSConnection.zapsOSService?.listen()
     }
@@ -86,6 +85,16 @@ class MainActivity : AppCompatActivity() {
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        IntentEngine.music.providerModule?.onActivityResult(requestCode,resultCode,data)
+        zapsOSConnection.
+        zapsOSService?.
+        intentEngine?.
+        music?.
+        providerModule?.
+        onActivityResult(
+            requestCode,
+            resultCode,
+            data
+        )
     }
 }
+

@@ -25,19 +25,22 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 
-class Spotify(appdata: AppData, context: Context) : MusicProvider(appdata,context) {
+class Spotify(appData: AppData): MusicProvider(appData) {
     override val moduleName: String="Spotify"
+    private val speechSynthesizer = appData.speechSynthesizer
     var mSpotifyAppRemote: SpotifyAppRemote? = null
-    private val clientID = super.appdata.metadata.getString("SPOTIFY_ID")
+    private val clientID = appData.metadata.getString("SPOTIFY_ID")
     private val redirectURI = "comwhminzapsos://callback"
     private val tokenRequestCode = 1337
-    private val sharedPrefEditor = super.appdata.sharedPref.edit()
+    private val sharedPrefEditor = appData.sharedPref.edit()
 
 
     private val client = OkHttpClient()
     override fun playSong(song: String?, artist: String?): Boolean {
-        Log.d(moduleName,"Playing song")
-        val accessToken = appdata.sharedPref.getString("spotify_access_token","")
+        Log.d(moduleName,"Playing $song by $artist")
+        speechSynthesizer.speak("Playing $song")
+
+        val accessToken = appData.sharedPref.getString("spotify_access_token","")
         if (accessToken == null || accessToken == ""){return false}// If no token is found it returns false
         if (!remoteExists()){return false}//Automatically authorizes mSpotifyAppRemote if not authorized. Currently this makes Zapps forget the current command.
 
@@ -67,7 +70,6 @@ class Spotify(appdata: AppData, context: Context) : MusicProvider(appdata,contex
         })
         return true
     }
-
     override fun resume(): Boolean {
         if (!remoteExists()){return false}
         mSpotifyAppRemote!!.playerApi.resume().setResultCallback {
@@ -75,7 +77,6 @@ class Spotify(appdata: AppData, context: Context) : MusicProvider(appdata,contex
             .setErrorCallback {errorCallback}
         return true
     }
-
     override fun pause(): Boolean {
         if (!remoteExists()){return false}
         mSpotifyAppRemote!!.playerApi.pause().setResultCallback {
@@ -83,10 +84,7 @@ class Spotify(appdata: AppData, context: Context) : MusicProvider(appdata,contex
             .setErrorCallback {errorCallback}
         return true
     }
-
-
-    override
-    fun togglePause(): Boolean {
+    override fun togglePause(): Boolean {
         if (!remoteExists()){return false}
 
         mSpotifyAppRemote!!.playerApi.playerState.setResultCallback { playerState: PlayerState ->
@@ -99,7 +97,6 @@ class Spotify(appdata: AppData, context: Context) : MusicProvider(appdata,contex
         }
         return true
     }
-
     override fun skipForward(): Boolean {
         if (!remoteExists()){return false}
         mSpotifyAppRemote!!.playerApi.skipNext().setResultCallback {
@@ -107,7 +104,6 @@ class Spotify(appdata: AppData, context: Context) : MusicProvider(appdata,contex
             .setErrorCallback {errorCallback}
         return true
     }
-
     override fun skipBack(): Boolean {//This should jump back by a song. Currently acts like restartSong()
         if (!remoteExists()){return false}
         mSpotifyAppRemote!!.playerApi.skipPrevious().setResultCallback {
@@ -117,22 +113,19 @@ class Spotify(appdata: AppData, context: Context) : MusicProvider(appdata,contex
             .setErrorCallback {errorCallback}
         return true
     }
-
     override fun restartSong(): Boolean {
         if (!remoteExists()){return false}
         mSpotifyAppRemote!!.playerApi.skipPrevious().setResultCallback {
-            Log.d(moduleName, "Toggled shuffle")}
+            Log.d(moduleName, "Skipped backwards")}
             .setErrorCallback {errorCallback}
         return true
     }
 
-    //Used in the repeat toggle steps. If used make sure to run remoteExists beforehand. State 0 is no repeat, State 1 is repeat playlist and State 2 is repeat Song
-    private fun setRepeat(repeatState: Int) {
+    private fun setRepeat(repeatState: Int) { //Used in the repeat toggle steps. If used make sure to run remoteExists beforehand. State 0 is no repeat, State 1 is repeat playlist and State 2 is repeat Song
         mSpotifyAppRemote!!.playerApi.setRepeat(repeatState).setResultCallback {
-            Log.d(moduleName, "Set shuffle to state $repeatState")}
+            Log.d(moduleName, "Set repeat to state $repeatState")}
             .setErrorCallback {errorCallback}
     }
-
     override fun togglePlaylistRepeat(): Boolean {
         if (!remoteExists()){return false}
         mSpotifyAppRemote!!.playerApi.playerState.setResultCallback { playerState: PlayerState ->
@@ -145,9 +138,9 @@ class Spotify(appdata: AppData, context: Context) : MusicProvider(appdata,contex
         }
         return true
     }
-
     override fun toggleSongRepeat(): Boolean {
         if (!remoteExists()){return false}
+        speechSynthesizer.speak("Toggling repeat")
         mSpotifyAppRemote!!.playerApi.playerState.setResultCallback { playerState: PlayerState ->
             if(playerState.playbackOptions.repeatMode!=1){
                 setRepeat(1)
@@ -158,19 +151,17 @@ class Spotify(appdata: AppData, context: Context) : MusicProvider(appdata,contex
         }
         return true
     }
-
-    override fun toggleShuffle(): Boolean {
+    override fun toggleShuffle(): Boolean {  //Doesn't seem to toggle the shuffle anymore? TODO: fix
         if (!remoteExists()){return false}
+        speechSynthesizer.speak("Toggling shuffle")
         mSpotifyAppRemote!!.playerApi.toggleShuffle().setResultCallback {
             Log.d(moduleName, "Toggled shuffle")}
             .setErrorCallback {errorCallback}
         return true
     }
 
-
-
     override fun authorize(activity: Activity) {
-        if (System.currentTimeMillis() >= appdata.sharedPref.getLong("spotify_access_token_expiration",0)){
+        if (System.currentTimeMillis() >= appData.sharedPref.getLong("spotify_access_token_expiration",0)){
             openLoginPage(activity)
         }
         remoteExists()
@@ -237,7 +228,7 @@ class Spotify(appdata: AppData, context: Context) : MusicProvider(appdata,contex
             .build()
 
         SpotifyAppRemote.connect(
-            super.context, connectionParams,
+            super.appData.appContext, connectionParams,
             object : Connector.ConnectionListener {
                 override fun onConnected(spotifyAppRemote: SpotifyAppRemote) {
                     mSpotifyAppRemote = spotifyAppRemote
@@ -247,7 +238,6 @@ class Spotify(appdata: AppData, context: Context) : MusicProvider(appdata,contex
             }
         )
     }
-
     private fun remoteExists(): Boolean {
         if (mSpotifyAppRemote==null) {
             Log.e(moduleName, "Remote doesn't exist, creating...")
@@ -258,7 +248,7 @@ class Spotify(appdata: AppData, context: Context) : MusicProvider(appdata,contex
     }
 
     //Woooo! Finally figured out lambda functions
-    private val errorCallback: (Throwable) -> Unit = {
-        Log.e("Spotify", it.toString())
+    private val errorCallback: (Throwable) -> Unit = {error ->
+        Log.e(moduleName, error.toString())
     }
 }

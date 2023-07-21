@@ -11,20 +11,19 @@ import android.speech.RecognitionListener
 import android.speech.SpeechRecognizer
 import android.util.Log
 import androidx.preference.PreferenceManager
+import com.whmin.zapsos.AppData
 import com.whmin.zapsos.speech.SpeechRecognition
 import com.whmin.zapsos.intentengine.IntentEngine
 import com.whmin.zapsos.speech.SpeechSynthesis
 
 class ZapsOSService : Service() {
-    private lateinit var sharedPref : SharedPreferences
-    private lateinit var metadata : Bundle
     private lateinit var speechRecognizer : SpeechRecognition
-    private lateinit var speechSynthesizer: SpeechSynthesis
+    lateinit var intentEngine: IntentEngine
+    lateinit var appData: AppData
     val moduleName = "ZapsOS Service"
 
     fun runCommand(input: String){
-        val zapsResponse = IntentEngine.detectAndRunCommand(input)
-        speechSynthesizer.speak(zapsResponse)
+        intentEngine.detectAndRunCommand(input)
     }
 
     fun listen(){
@@ -34,13 +33,14 @@ class ZapsOSService : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
-        metadata = getApplicationMetadata()
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
+        val metadata = getApplicationMetadata()
 
         speechRecognizer = SpeechRecognition(applicationContext,speechRecognizerListener)
-        speechSynthesizer = SpeechSynthesis(this,speechSynthInitCallback)
+        val speechSynthesizer = SpeechSynthesis(this,speechSynthInitCallback)
 
-        IntentEngine.initialize(metadata, sharedPref, applicationContext)
+        appData = AppData(metadata, sharedPref, applicationContext, speechSynthesizer)
+        intentEngine = IntentEngine(appData)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -51,7 +51,7 @@ class ZapsOSService : Service() {
     inner class LocalBinder : Binder() {
         fun getService(): ZapsOSService = this@ZapsOSService
     }
-    override fun onBind(intent: Intent): IBinder? {
+    override fun onBind(intent: Intent): IBinder {
         return LocalBinder()
     }
 
@@ -69,13 +69,12 @@ class ZapsOSService : Service() {
 
     private val speechRecognizerListener = object : RecognitionListener {
         override fun onResults(results: Bundle?) {
-            Log.d(moduleName,"Resulted")
             val speechResults =
                 results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
             if (!speechResults.isNullOrEmpty()) {
-                val recognizedText = speechResults[0]
-                Log.d(moduleName,recognizedText.toString())
-                runCommand(speechResults.toString())
+                val recognizedText = speechResults[0].toString().lowercase()
+                Log.d(moduleName, "Detected voice input: $recognizedText")
+                runCommand(recognizedText)
             }
         }
         override fun onPartialResults(p0: Bundle?) {}
@@ -84,13 +83,15 @@ class ZapsOSService : Service() {
         override fun onRmsChanged(rmsdB: Float) {}
         override fun onEndOfSpeech() {}
         override fun onError(error: Int) {
-            Log.e(moduleName, "Something went wrong. Error code: $error")}
+            Log.e(moduleName, "Something went wrong. Error code: $error")
+            SpeechRecognizer.ERROR_NETWORK
+        }
         override fun onBufferReceived(buffer: ByteArray?) {}
         override fun onEvent(eventType: Int, params: Bundle?) {}
     }
 
 
     private val speechSynthInitCallback: () -> Unit = {
-        speechSynthesizer.speak("Initialized")
+        appData.speechSynthesizer.speak("Initialized")
     }
 }

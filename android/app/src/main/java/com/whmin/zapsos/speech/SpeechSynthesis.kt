@@ -6,7 +6,7 @@ import android.speech.tts.TextToSpeech.OnInitListener
 import android.util.Log
 import java.util.Locale
 
-class SpeechSynthesis (private val context: Context, private val onInitCallback: () -> Unit): OnInitListener {
+class SpeechSynthesis (context: Context, private val onInitCallback: () -> Unit): OnInitListener {
     val moduleName = "Speech Synthesizer"
     private var speechSynthesizer = TextToSpeech(context, this)
 

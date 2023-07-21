@@ -6,7 +6,7 @@ import android.content.Intent
 import com.whmin.zapsos.AppData
 
 //am I using inheritance correctly? I think this is a good way to implement this
-abstract class MusicProvider(val appdata: AppData, val context: Context){
+abstract class MusicProvider(val appData: AppData){
     abstract val moduleName: String
 
     abstract fun playSong(song: String?, artist: String?): Boolean
