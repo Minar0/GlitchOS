@@ -9,7 +9,6 @@ import java.util.regex.Pattern
 
 class IntentEngine(private val appData: AppData) {
     val moduleName="Intent Engine"
-    private val speechSynthesizer = appData.speechSynthesizer
     private lateinit var currentModule: Module
     var music: MusicModule = MusicModule(appData)
     private val calendar = CalendarModule()
@@ -25,7 +24,7 @@ class IntentEngine(private val appData: AppData) {
         val preprocessedInput = preprocessInput(input)
         if (preprocessedInput == null || preprocessedInput == ""){ //TODO: add a way for Zaps to explain why a command failed
             Log.e(moduleName,"Input string cleared by preprocessor")
-            speechSynthesizer.speak("Yes?")
+            appData.soundOutput.speak("Yes?")
             return false
         }
         Log.d(moduleName,"Input preprocessed: $preprocessedInput")
@@ -33,7 +32,7 @@ class IntentEngine(private val appData: AppData) {
         val intendedModule = classifyIntent(preprocessedInput)
         if (intendedModule==null) {
             Log.e(moduleName,"No intended module detected from $preprocessedInput")
-            speechSynthesizer.speak("I'm not sure what you want me to do.")
+            appData.soundOutput.speak("I'm not sure what you want me to do.")
             return false
         }
         Log.d(moduleName,"Intent found: ${intendedModule.moduleName}")

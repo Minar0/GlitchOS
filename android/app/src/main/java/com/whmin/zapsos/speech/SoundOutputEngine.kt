@@ -1,19 +1,30 @@
 package com.whmin.zapsos.speech
 
 import android.content.Context
+import android.media.MediaPlayer
 import android.speech.tts.TextToSpeech
 import android.speech.tts.TextToSpeech.OnInitListener
 import android.util.Log
+import com.whmin.zapsos.R
 import java.util.Locale
 
-class SpeechSynthesis (context: Context, private val onInitCallback: () -> Unit): OnInitListener {
-    val moduleName = "Speech Synthesizer"
+class SoundOutputEngine (context: Context, private val onInitCallback: () -> Unit): OnInitListener {
+    val moduleName = "Sound Output Manager"
     private var speechSynthesizer = TextToSpeech(context, this)
+    private var listenBeep = MediaPlayer.create(context, R.raw.listening_beep)
+    private var successBeep = MediaPlayer.create(context, R.raw.success_beep)
 
     fun speak(text: String) {
         speechSynthesizer.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
     }
 
+    fun playListenBeep(){
+        listenBeep.start()
+    }
+
+    fun playSuccessBeep(){
+        successBeep.start()
+    }
 
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {

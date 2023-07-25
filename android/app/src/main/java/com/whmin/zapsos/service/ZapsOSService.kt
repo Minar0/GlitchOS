@@ -2,7 +2,6 @@ package com.whmin.zapsos.service
 
 import android.app.Service
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Binder
 import android.os.Bundle
@@ -12,12 +11,12 @@ import android.speech.SpeechRecognizer
 import android.util.Log
 import androidx.preference.PreferenceManager
 import com.whmin.zapsos.AppData
-import com.whmin.zapsos.speech.SpeechRecognition
+import com.whmin.zapsos.speech.SpeechRecognitionEngine
 import com.whmin.zapsos.intentengine.IntentEngine
-import com.whmin.zapsos.speech.SpeechSynthesis
+import com.whmin.zapsos.speech.SoundOutputEngine
 
 class ZapsOSService : Service() {
-    private lateinit var speechRecognizer : SpeechRecognition
+    private lateinit var speechRecognizer : SpeechRecognitionEngine
     lateinit var intentEngine: IntentEngine
     lateinit var appData: AppData
     val moduleName = "ZapsOS Service"
@@ -36,10 +35,10 @@ class ZapsOSService : Service() {
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
         val metadata = getApplicationMetadata()
 
-        speechRecognizer = SpeechRecognition(applicationContext,speechRecognizerListener)
-        val speechSynthesizer = SpeechSynthesis(this,speechSynthInitCallback)
+        speechRecognizer = SpeechRecognitionEngine(applicationContext,speechRecognizerListener)
+        val soundOutput = SoundOutputEngine(this,speechSynthInitCallback)
 
-        appData = AppData(metadata, sharedPref, applicationContext, speechSynthesizer)
+        appData = AppData(metadata, sharedPref, applicationContext, soundOutput)
         intentEngine = IntentEngine(appData)
     }
 
@@ -78,7 +77,8 @@ class ZapsOSService : Service() {
             }
         }
         override fun onPartialResults(p0: Bundle?) {}
-        override fun onReadyForSpeech(params: Bundle?) {}
+        override fun onReadyForSpeech(params: Bundle?) {
+            appData.soundOutput.playListenBeep()}
         override fun onBeginningOfSpeech() {}
         override fun onRmsChanged(rmsdB: Float) {}
         override fun onEndOfSpeech() {}
@@ -92,6 +92,6 @@ class ZapsOSService : Service() {
 
 
     private val speechSynthInitCallback: () -> Unit = {
-        appData.speechSynthesizer.speak("Initialized")
+        appData.soundOutput.playSuccessBeep()
     }
 }

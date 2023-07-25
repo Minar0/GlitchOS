@@ -5,9 +5,8 @@ import android.content.Intent
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
-import com.whmin.zapsos.service.ZapsOSService
 
-class SpeechRecognition(private val appContext: Context, private val speechRecognizerListener: RecognitionListener) {
+class SpeechRecognitionEngine(private val appContext: Context, private val speechRecognizerListener: RecognitionListener) {
     val moduleName = "Speech Recognition"
     private lateinit var speechRecognizer: SpeechRecognizer
     private val speechIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)

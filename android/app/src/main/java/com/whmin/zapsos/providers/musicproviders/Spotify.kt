@@ -27,7 +27,6 @@ import java.nio.charset.StandardCharsets
 
 class Spotify(appData: AppData): MusicProvider(appData) {
     override val moduleName: String="Spotify"
-    private val speechSynthesizer = appData.speechSynthesizer
     var mSpotifyAppRemote: SpotifyAppRemote? = null
     private val clientID = appData.metadata.getString("SPOTIFY_ID")
     private val redirectURI = "comwhminzapsos://callback"
@@ -38,7 +37,6 @@ class Spotify(appData: AppData): MusicProvider(appData) {
     private val client = OkHttpClient()
     override fun playSong(song: String?, artist: String?): Boolean {
         Log.d(moduleName,"Playing $song by $artist")
-        speechSynthesizer.speak("Playing $song")
 
         val accessToken = appData.sharedPref.getString("spotify_access_token","")
         if (accessToken == null || accessToken == ""){return false}// If no token is found it returns false
@@ -140,7 +138,7 @@ class Spotify(appData: AppData): MusicProvider(appData) {
     }
     override fun toggleSongRepeat(): Boolean {
         if (!remoteExists()){return false}
-        speechSynthesizer.speak("Toggling repeat")
+        appData.soundOutput.speak("Toggling repeat")
         mSpotifyAppRemote!!.playerApi.playerState.setResultCallback { playerState: PlayerState ->
             if(playerState.playbackOptions.repeatMode!=1){
                 setRepeat(1)
@@ -153,7 +151,7 @@ class Spotify(appData: AppData): MusicProvider(appData) {
     }
     override fun toggleShuffle(): Boolean {  //Doesn't seem to toggle the shuffle anymore? TODO: fix
         if (!remoteExists()){return false}
-        speechSynthesizer.speak("Toggling shuffle")
+        appData.soundOutput.speak("Toggling shuffle")
         mSpotifyAppRemote!!.playerApi.toggleShuffle().setResultCallback {
             Log.d(moduleName, "Toggled shuffle")}
             .setErrorCallback {errorCallback}
