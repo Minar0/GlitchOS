@@ -12,7 +12,7 @@ class IntentEngine(private val appData: AppData) {
     private lateinit var currentModule: Module
     var music: MusicModule = MusicModule(appData)
     private val calendar = CalendarModule()
-    private var moduleList: Array<Module> = arrayOf(music, calendar) //Higher priority intents should be closer to the top
+    private var moduleList: Array<Module> = arrayOf(PresentationModule(appData),music , calendar) //Higher priority intents should be closer to the top
 
 
     //used for preprocessing

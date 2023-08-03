@@ -48,7 +48,7 @@ class MusicModule(private val appData: AppData): Module(){
                 providerModule?.playSong(commandMap["song"], commandMap["artist"])
                 responder.playSong(commandMap["song"]) //Consider passing this to the providerModule so that it can run the command after pulling the song
             }
-            "toggle_pause" -> {
+            "toggle_pause" -> {//TODO: a saved pause state can't be relied upon. It either must pull the pause state from the API or this command must be split into two: pause and unpause
                 providerModule?.togglePause()
                 responder.togglePause()
             }
@@ -64,7 +64,7 @@ class MusicModule(private val appData: AppData): Module(){
                 providerModule?.toggleSongRepeat()
                 responder.toggleSongRepeat()
             }
-            "shuffle" -> {
+            "shuffle" -> {  //TODO: If pause is split into pause and unpause, shuffle should too
                 providerModule?.toggleShuffle()
                 responder.toggleShuffle()
             }
