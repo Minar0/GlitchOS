@@ -5,7 +5,6 @@ Modern day virtual assistants are a front end to their respective companies back
 ZapsOS is an open-source offline virtual assistant designed to replace these virtual assistants with an application that is ran fully on-device.
 
 
-<br /><br />
 Features
 --------
 
@@ -20,7 +19,6 @@ Alarm and Timer control<br />
 Weather<br />
 
 
-<br /><br />
 Installation
 ------------
 
@@ -33,7 +31,6 @@ Create new Android Studio project and import from Version Control using this lin
 If you'd like to get Spotify to work, you'll have to generate your own API key from Spotify's [Developer Console](https://developer.spotify.com/). You'll also need to sign your package and specify the callback URI which should be comwhminzapsos://callback
 
 
-<br /><br />
 Contribute
 ----------
 
@@ -41,27 +38,23 @@ Contribute
 - Source Code: https://github.com/Minar0/ZapsOS
 
 
-<br /><br />
 Support
 -------
 
 You can contact me at husenwb99@gmail.com
 
 
-<br /><br />
 License
 -------
 
 The project is licensed under the GPL-3.0 license.
 
 
-<br /><br />
 Other Info
 -------
 I'm in the process of changing the name of the project from ZapsOS to GlitchOS. For the time being expect references to both names.
 
 
-<br /><br />
 TODO List (in no particular order)
 -------
 Learn how to write documentation<br />
