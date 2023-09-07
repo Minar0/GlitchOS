@@ -1,6 +1,6 @@
-package com.whmin.zapsos.intentengine.modules.response
+package com.whmin.glitchos.intentengine.modules.response
 
-import com.whmin.zapsos.AppData
+import com.whmin.glitchos.AppData
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 

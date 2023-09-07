@@ -1,4 +1,4 @@
-package com.whmin.zapsos.intentengine.modules
+package com.whmin.glitchos.intentengine.modules
 
 import java.util.regex.Pattern
 

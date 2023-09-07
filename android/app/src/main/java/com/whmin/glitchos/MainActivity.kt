@@ -1,4 +1,4 @@
-package com.whmin.zapsos
+package com.whmin.glitchos
 
 
 import android.content.Context
@@ -11,15 +11,15 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.whmin.zapsos.intentengine.IntentEngine
-import com.whmin.zapsos.service.ZapsOSConnection
-import com.whmin.zapsos.service.ZapsOSService
+import com.whmin.glitchos.intentengine.IntentEngine
+import com.whmin.glitchos.service.GlitchOSConnection
+import com.whmin.glitchos.service.GlitchOSService
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var inputBox: EditText
     lateinit var responseBox: TextView
-    private var zapsOSConnection = ZapsOSConnection(this)
+    private var glitchOSConnection = GlitchOSConnection(this)
     private lateinit var intentEngine: IntentEngine
     var userInput: String = ""
 
@@ -28,14 +28,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.message_screen)
 
         inputBox = findViewById(R.id.user_input)
-        responseBox = findViewById(R.id.zapsos_response)
+        responseBox = findViewById(R.id.glitchos_response)
         inputBox.setOnEditorActionListener { _, actionId, _ ->
             var handled = false //I'm not sure why handled matters
 
             //Code only runs when the send key is pressed
             if (actionId == EditorInfo.IME_ACTION_SEND) {
                 userInput = inputBox.text.toString()
-                zapsOSConnection.zapsOSService?.runCommand(userInput)
+                glitchOSConnection.glitchOSService?.runCommand(userInput)
 
                 //This will close the soft keyboard from the current view, if it is focused
                 val view = this.currentFocus
@@ -52,19 +52,19 @@ class MainActivity : AppCompatActivity() {
 
         //Starts the ZapsOS Service. The connection callback gets a reference to the intentEngine and also sets up the provider
         val zapsOSServiceConnectionCallback: (() -> Unit) = {
-            intentEngine = zapsOSConnection.zapsOSService?.intentEngine!!
+            intentEngine = glitchOSConnection.glitchOSService?.intentEngine!!
             intentEngine.music.setupProvider(this)
             Log.d("Main","Created intentEngine")
         }
-        zapsOSConnection.onConnectedCallback=zapsOSServiceConnectionCallback
-        val zapsOSServiceIntent = Intent(this, ZapsOSService::class.java)
-        startForegroundService(zapsOSServiceIntent)
-        bindService(zapsOSServiceIntent, zapsOSConnection, Context.BIND_ABOVE_CLIENT)
+        glitchOSConnection.onConnectedCallback=zapsOSServiceConnectionCallback
+        val glitchOSServiceIntent = Intent(this, GlitchOSService::class.java)
+        startForegroundService(glitchOSServiceIntent)
+        bindService(glitchOSServiceIntent, glitchOSConnection, Context.BIND_ABOVE_CLIENT)
     }
 
     override fun onStop() {
         super.onStop()
-        zapsOSConnection.unbind()
+        glitchOSConnection.unbind()
     }
 
     fun goToSettings(view: View?) {
@@ -79,14 +79,14 @@ class MainActivity : AppCompatActivity() {
 
     fun test2(view: View?) {
         Log.d("Test2", "Test2 pressed")
-        zapsOSConnection.zapsOSService?.listen()
+        glitchOSConnection.glitchOSService?.listen()
     }
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        zapsOSConnection.
-        zapsOSService?.
+        glitchOSConnection.
+        glitchOSService?.
         intentEngine?.
         music?.
         providerModule?.

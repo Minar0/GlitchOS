@@ -21,7 +21,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/zapsos_response"
+        android:id="@+id/glitchos_response"
         android:layout_width="325dp"
         android:layout_height="126dp"
         app:layout_constraintBottom_toTopOf="@+id/user_input"
@@ -31,12 +31,12 @@
         app:layout_constraintVertical_bias="0.148" />
 
     <TextView
-        android:id="@+id/zapsosName"
+        android:id="@+id/glitchos_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/zapsos_name"
-        app:layout_constraintBottom_toTopOf="@+id/zapsos_response"
-        app:layout_constraintStart_toStartOf="@+id/zapsos_response" />
+        android:text="@string/glitchos_name"
+        app:layout_constraintBottom_toTopOf="@+id/glitchos_response"
+        app:layout_constraintStart_toStartOf="@+id/glitchos_response" />
 
     <Button
         android:id="@+id/button"
@@ -59,7 +59,7 @@
         app:layout_constraintEnd_toStartOf="@+id/Test2"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/zapsos_response" />
+        app:layout_constraintTop_toBottomOf="@+id/glitchos_response" />
 
     <Button
         android:id="@+id/Test2"

@@ -1,4 +1,4 @@
-package com.whmin.zapsos.speech
+package com.whmin.glitchos.speech
 
 import android.content.Context
 import android.content.Intent

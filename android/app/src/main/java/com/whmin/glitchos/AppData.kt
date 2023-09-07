@@ -1,9 +1,9 @@
-package com.whmin.zapsos
+package com.whmin.glitchos
 
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import com.whmin.zapsos.speech.SoundOutputEngine
+import com.whmin.glitchos.speech.SoundOutputEngine
 
 //This stores a variety of useful stuff app information that I can pass to ZapsOS's various bits and bobs
 //the urge to make this a singleton is rising

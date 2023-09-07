@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'com.whmin.zapsos'
+    namespace 'com.whmin.glitchos'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.whmin.zapsos"
+        applicationId "com.whmin.glitchos"
         minSdk 29
         //noinspection OldTargetApi
         targetSdk 33

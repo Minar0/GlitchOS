@@ -1,7 +1,6 @@
-package com.whmin.zapsos.providers.musicproviders
+package com.whmin.glitchos.providers.musicproviders
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.spotify.android.appremote.api.ConnectionParams
@@ -13,7 +12,7 @@ import com.spotify.protocol.types.PlayerState
 import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse
-import com.whmin.zapsos.AppData
+import com.whmin.glitchos.AppData
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient

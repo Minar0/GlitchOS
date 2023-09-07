@@ -1,4 +1,4 @@
-package com.whmin.zapsos
+package com.whmin.glitchos
 
 import org.junit.Test
 

@@ -1,9 +1,8 @@
-package com.whmin.zapsos.providers.musicproviders
+package com.whmin.glitchos.providers.musicproviders
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import com.whmin.zapsos.AppData
+import com.whmin.glitchos.AppData
 
 //am I using inheritance correctly? I think this is a good way to implement this
 abstract class MusicProvider(val appData: AppData){

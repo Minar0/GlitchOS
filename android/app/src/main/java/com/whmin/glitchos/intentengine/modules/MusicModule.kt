@@ -1,11 +1,11 @@
-package com.whmin.zapsos.intentengine.modules
+package com.whmin.glitchos.intentengine.modules
 
 import android.app.Activity
 import android.content.SharedPreferences
 import android.util.Log
-import com.whmin.zapsos.AppData
-import com.whmin.zapsos.intentengine.modules.response.ModuleResponseEngine
-import com.whmin.zapsos.providers.musicproviders.*
+import com.whmin.glitchos.AppData
+import com.whmin.glitchos.intentengine.modules.response.ModuleResponseEngine
+import com.whmin.glitchos.providers.musicproviders.*
 import java.util.regex.Pattern
 
 //TODO: Allow for searching of both Song and Artist

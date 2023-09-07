@@ -1,9 +1,9 @@
-package com.whmin.zapsos.intentengine
+package com.whmin.glitchos.intentengine
 
 import android.util.Log
-import com.whmin.zapsos.AppData
-import com.whmin.zapsos.intentengine.modules.*
-import com.whmin.zapsos.intentengine.modules.MusicModule
+import com.whmin.glitchos.AppData
+import com.whmin.glitchos.intentengine.modules.*
+import com.whmin.glitchos.intentengine.modules.MusicModule
 import java.util.regex.Pattern
 
 
@@ -16,13 +16,13 @@ class IntentEngine(private val appData: AppData) {
 
 
     //used for preprocessing
-    private val zapsOSNicknames= "za(p|pp)sos|za(p|pp)s|za(p|pp)y"
-    private val preprocessPattern: Pattern = Pattern.compile(zapsOSNicknames)
+    private val glitchOSNicknames= "glitch"
+    private val preprocessPattern: Pattern = Pattern.compile(glitchOSNicknames)
 
 
     fun detectAndRunCommand(input: String): Boolean{
         val preprocessedInput = preprocessInput(input)
-        if (preprocessedInput == null || preprocessedInput == ""){ //TODO: add a way for Zaps to explain why a command failed
+        if (preprocessedInput == null || preprocessedInput == ""){ //TODO: add a way for Glitch to explain why a command failed
             Log.e(moduleName,"Input string cleared by preprocessor")
             appData.soundOutput.speak("Yes?")
             return false

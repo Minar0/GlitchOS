@@ -1,4 +1,4 @@
-package com.whmin.zapsos.service
+package com.whmin.glitchos.service
 
 import android.app.Service
 import android.content.Intent
@@ -10,16 +10,16 @@ import android.speech.RecognitionListener
 import android.speech.SpeechRecognizer
 import android.util.Log
 import androidx.preference.PreferenceManager
-import com.whmin.zapsos.AppData
-import com.whmin.zapsos.speech.SpeechRecognitionEngine
-import com.whmin.zapsos.intentengine.IntentEngine
-import com.whmin.zapsos.speech.SoundOutputEngine
+import com.whmin.glitchos.AppData
+import com.whmin.glitchos.speech.SpeechRecognitionEngine
+import com.whmin.glitchos.intentengine.IntentEngine
+import com.whmin.glitchos.speech.SoundOutputEngine
 
-class ZapsOSService : Service() {
+class GlitchOSService : Service() {
     private lateinit var speechRecognizer : SpeechRecognitionEngine
     lateinit var intentEngine: IntentEngine
     lateinit var appData: AppData
-    val moduleName = "ZapsOS Service"
+    val moduleName = "GlitchOS Service"
 
     fun runCommand(input: String){
         intentEngine.detectAndRunCommand(input)
@@ -48,7 +48,7 @@ class ZapsOSService : Service() {
 
     //These return a local binder to allow activities to connect to the service
     inner class LocalBinder : Binder() {
-        fun getService(): ZapsOSService = this@ZapsOSService
+        fun getService(): GlitchOSService = this@GlitchOSService
     }
     override fun onBind(intent: Intent): IBinder {
         return LocalBinder()

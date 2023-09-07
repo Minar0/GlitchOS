@@ -1,7 +1,7 @@
-package com.whmin.zapsos.intentengine.modules
+package com.whmin.glitchos.intentengine.modules
 
 import android.util.Log
-import com.whmin.zapsos.AppData
+import com.whmin.glitchos.AppData
 import java.util.regex.Pattern
 import kotlin.random.Random
 

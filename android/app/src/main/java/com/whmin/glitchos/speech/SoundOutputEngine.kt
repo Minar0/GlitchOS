@@ -1,12 +1,11 @@
-package com.whmin.zapsos.speech
+package com.whmin.glitchos.speech
 
 import android.content.Context
 import android.media.MediaPlayer
 import android.speech.tts.TextToSpeech
 import android.speech.tts.TextToSpeech.OnInitListener
-import android.speech.tts.Voice
 import android.util.Log
-import com.whmin.zapsos.R
+import com.whmin.glitchos.R
 import java.util.Locale
 
 class SoundOutputEngine (context: Context, private val onInitCallback: () -> Unit): OnInitListener {

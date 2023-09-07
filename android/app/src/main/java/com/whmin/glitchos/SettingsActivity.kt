@@ -1,21 +1,20 @@
-package com.whmin.zapsos
+package com.whmin.glitchos
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import com.whmin.zapsos.intentengine.IntentEngine
-import com.whmin.zapsos.service.ZapsOSConnection
-import com.whmin.zapsos.service.ZapsOSService
+import com.whmin.glitchos.intentengine.IntentEngine
+import com.whmin.glitchos.service.GlitchOSConnection
+import com.whmin.glitchos.service.GlitchOSService
 
 
 private const val TITLE_TAG = "settingsActivityTitle"
 
 class SettingsActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceStartFragmentCallback { //Most of this stuff is boilerplate code made by Android Studio. I'm slowly figuring out how it all works. Never worked with Fragments before
-    private var zapsOSConnection = ZapsOSConnection(this)
+    private var glitchOSConnection = GlitchOSConnection(this)
     lateinit var intentEngine: IntentEngine
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,18 +37,18 @@ class SettingsActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPrefere
 
 
         val zapsOSServiceConnectionCallback: (() -> Unit) = {
-            intentEngine = zapsOSConnection.zapsOSService?.intentEngine!!
+            intentEngine = glitchOSConnection.glitchOSService?.intentEngine!!
             intentEngine.music.setupProviderListener(this)
         }
-        zapsOSConnection.onConnectedCallback=zapsOSServiceConnectionCallback
-        val zapsOSServiceIntent = Intent(this, ZapsOSService::class.java)
-        bindService(zapsOSServiceIntent, zapsOSConnection, Context.BIND_ABOVE_CLIENT)
+        glitchOSConnection.onConnectedCallback=zapsOSServiceConnectionCallback
+        val glitchOSServiceIntent = Intent(this, GlitchOSService::class.java)
+        bindService(glitchOSServiceIntent, glitchOSConnection, Context.BIND_ABOVE_CLIENT)
     }
 
     override fun onPause() {
         super.onPause()
         intentEngine.music.cleanupProviderListener()//Do I really need to deregister the listener? It seems like Android will do it for me
-        zapsOSConnection.unbind()
+        glitchOSConnection.unbind()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

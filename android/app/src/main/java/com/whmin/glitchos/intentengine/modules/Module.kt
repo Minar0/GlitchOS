@@ -1,6 +1,6 @@
 @file:Suppress("FoldInitializerAndIfToElvis")
 
-package com.whmin.zapsos.intentengine.modules
+package com.whmin.glitchos.intentengine.modules
 
 import android.util.Log
 import java.util.regex.Pattern
