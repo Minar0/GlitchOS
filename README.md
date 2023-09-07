@@ -24,10 +24,10 @@ Installation
 ------------
 
 Users:<br />
-He's pretty unfinished right now, but the alpha version of ZapsOS should be on Google Play soonish.<br />
+He's pretty unfinished right now, but the alpha version of GlitchOS should be on Google Play soonish.<br />
 
 Developers:<br />
-Create new Android Studio project and import from Version Control using this link https://github.com/Minar0/ZapsOS<br />
+Create new Android Studio project and import from Version Control using this link https://github.com/Minar0/GlitchOS<br />
 
 If you'd like to get Spotify to work, you'll have to generate your own API key from Spotify's [Developer Console](https://developer.spotify.com/). You'll also need to sign your package and specify the callback URI which should be comwhminzapsos://callback
 
@@ -35,8 +35,8 @@ If you'd like to get Spotify to work, you'll have to generate your own API key f
 Contribute
 ----------
 
-- Issue Tracker: https://github.com/Minar0/ZapsOS/issues
-- Source Code: https://github.com/Minar0/ZapsOS
+- Issue Tracker: https://github.com/Minar0/GlitchOS/issues
+- Source Code: https://github.com/Minar0/GlitchOS
 
 
 Support
