@@ -83,7 +83,7 @@ class GlitchOSService : Service() {
         override fun onRmsChanged(rmsdB: Float) {}
         override fun onEndOfSpeech() {}
         override fun onError(error: Int) {
-            Log.e(moduleName, "Something went wrong. Error code: $error")
+            Log.e(moduleName, "Something went wrong with the speech recognition engine. Error code: $error")
             SpeechRecognizer.ERROR_NETWORK
         }
         override fun onBufferReceived(buffer: ByteArray?) {}

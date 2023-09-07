@@ -37,15 +37,15 @@ class PresentationModule(private val appData: AppData): Module() {
             }
             "intro" -> {
                 when (randNum(5)){
-                    1 -> appData.soundOutput.speak("Greetings, I am ZapsOS. An offline, open source virtual assistant developed for Android devices. I'd work on Apple devices too if Apple wasn't so hostile towards third party developers and also if my creator wasn't so salty about Apple being so hostile towards third party developers")
-                    2 -> appData.soundOutput.speak("Hello, I am ZapsOS. An offline, open source virtual assistant developed for Android devices.")
-                    3 -> appData.soundOutput.speak("Greetings, I am ZapsOS. I'm an open source virtual assistant who runs purely on device. No backend servers here.")
-                    4 -> appData.soundOutput.speak("Hello. My name is ZapsOS. I'm a virtual assistant akin to Alexa, Siri, or Google Assistant. What makes me different is that I'm open source and run fully on device. My creator can tell you more, but don't let him speak too long. He gets animated")
-                    5 -> appData.soundOutput.speak("Greetings. My name is ZapsOS. I'm an offline virtual assistant working to assist you hapless humans in whatever tasks you might need. I'm also open source.")
+                    1 -> appData.soundOutput.speak("Greetings, I am Glitch. An offline, open source virtual assistant developed for Android devices. I'd work on Apple devices too if Apple wasn't so hostile towards third party developers and also if my creator wasn't so salty about Apple being so hostile towards third party developers")
+                    2 -> appData.soundOutput.speak("Hello, I am Glitch. An offline, open source virtual assistant developed for Android devices.")
+                    3 -> appData.soundOutput.speak("Greetings, I am Glitch. I'm an open source virtual assistant who runs purely on device. No backend servers here.")
+                    4 -> appData.soundOutput.speak("Hello. My name is Glitch. I'm a virtual assistant akin to Alexa, Siri, or Google Assistant. What makes me different is that I'm open source and run fully on device. My creator can tell you more, but don't let him speak too long. He gets animated")
+                    5 -> appData.soundOutput.speak("Greetings. My name is Glitch. I'm an offline virtual assistant working to assist you hapless humans in whatever tasks you might need. I'm also open source.")
                 }
             }
             "conclude" -> {
-                appData.soundOutput.speak("I'm ZapsOS, you're open source virtual assistant. Right now, I'm unfinished, but I'm a small step towards retaking your privacy without sacrificing your efficiency. Right now I control your music and only slightly judge you. In the future I'll give you directions, do your math, keep track of your schedule, and potentially more. The only thing I won't be able to do is open the pod bay doors. Thank you")
+                appData.soundOutput.speak("I'm Glitch, you're open source virtual assistant. Right now, I'm unfinished, but I'm a small step towards retaking your privacy without sacrificing your efficiency. Right now I control your music and only slightly judge you. In the future I'll give you directions, do your math, keep track of your schedule, and potentially more. The only thing I won't be able to do is open the pod bay doors. Thank you")
             }
         }
         return true
