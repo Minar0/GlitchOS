@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var responseBox: TextView
     private var glitchOSConnection = GlitchOSConnection(this)
     private lateinit var intentEngine: IntentEngine
-    var userInput: String = ""
+    private var userInput: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
