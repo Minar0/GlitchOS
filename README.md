@@ -2,7 +2,8 @@ GlitchOS
 ========
 
 Modern day virtual assistants are a front end to their respective companies backend servers. This can be a privacy concern as user data is stored and sold without their control
-GlitchOS is an open-source offline virtual assistant designed to replace these virtual assistants with an application that is ran fully on-device.
+
+Glitch is an open-source offline virtual assistant designed to replace these virtual assistants with an application that is ran fully on-device.
 
 
 Features
